@@ -2,4 +2,3 @@ streamlit==1.40.0
 SpeechRecognition==3.10.1
 sounddevice==0.4.7
 soundfile==0.12.1
-pocketsphinx==0.1.18
