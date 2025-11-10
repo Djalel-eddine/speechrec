@@ -1,8 +1,9 @@
-import speech_recognition as sr
 import streamlit as st
 import os
 from datetime import datetime
+import speech_recognition as sr
 
+# --- Streamlit App Title
 st.title("🎙️ Enhanced Speech Recognition App (by Djalel)")
 
 # --- Select API
@@ -29,16 +30,26 @@ start_button = col1.button("🎤 Start Recording")
 pause_button = col2.button("⏸ Pause")
 resume_button = col3.button("▶ Resume")
 
+# --- Initialize recognizer and pause flag
 r = sr.Recognizer()
 mic = sr.Microphone()
 pause_flag = False
+
+# --- Pause / Resume Logic
+if pause_button:
+    pause_flag = True
+    st.warning("Recognition paused.")
+
+if resume_button:
+    pause_flag = False
+    st.success("Recognition resumed.")
 
 # --- Transcription logic
 def transcribe_speech(api_choice, lang):
     global pause_flag
     try:
         with mic as source:
-            st.info("Listening... Speak now 🎧")
+            st.info("🎧 Listening... Speak now")
             r.adjust_for_ambient_noise(source, duration=1)
             audio = r.listen(source, timeout=10, phrase_time_limit=10)
             st.success("Audio captured, transcribing...")
@@ -47,6 +58,7 @@ def transcribe_speech(api_choice, lang):
             st.warning("Recognition paused.")
             return ""
 
+        # --- Choose API
         if api_choice == "Google Speech Recognition":
             text = r.recognize_google(audio, language=lang)
         elif api_choice == "Sphinx (Offline)":
@@ -65,15 +77,6 @@ def transcribe_speech(api_choice, lang):
         st.error(f"Unexpected error: {e}")
 
     return ""
-
-# --- Pause / Resume Logic
-if pause_button:
-    pause_flag = True
-    st.warning("Recognition paused.")
-
-if resume_button:
-    pause_flag = False
-    st.success("Recognition resumed.")
 
 # --- Start Transcription
 if start_button:
